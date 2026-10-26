@@ -1,200 +1,246 @@
-# 🌊 Analisis Sentimen Wisata Air Terjun Lau Berte
+# Analisis Sentimen Wisata Air Terjun Lau Berte
 
-Aplikasi web berbasis **Streamlit** untuk menganalisis sentimen komentar media sosial (TikTok) terhadap wisata **Air Terjun Lau Berte** (Kabupaten Langkat, Sumatera Utara) menggunakan algoritma **Multinomial Naive Bayes** dengan fitur **TF-IDF**. Komentar diklasifikasikan secara otomatis ke dalam tiga kelas: **positif**, **negatif**, dan **netral**.
+Aplikasi web berbasis **Streamlit** untuk menganalisis sentimen komentar pengguna TikTok mengenai wisata Air Terjun Lau Berte di Kabupaten Langkat, Sumatera Utara. Sistem ini menggunakan algoritma **Multinomial Naive Bayes** dengan pembobotan fitur **TF-IDF** untuk mengklasifikasikan komentar ke dalam tiga kategori sentimen, yaitu positif, negatif, dan netral.
 
----
+## Latar Belakang
 
-## 🎓 Latar Belakang Penelitian
+Media sosial menjadi salah satu sumber informasi yang dapat digunakan untuk memahami opini masyarakat terhadap suatu destinasi wisata. Melalui TikTok, pengguna dapat membagikan pengalaman dan memberikan tanggapan melalui kolom komentar. Namun, banyaknya komentar membuat analisis secara manual membutuhkan waktu dan tenaga lebih.
 
-Aplikasi ini adalah implementasi dari penelitian skripsi tentang analisis sentimen komentar TikTok terhadap Wisata Air Terjun Lau Berte.
+Proyek ini merupakan implementasi penelitian skripsi yang bertujuan mengolah dan mengklasifikasikan komentar TikTok secara otomatis. Hasil analisis diharapkan dapat memberikan gambaran mengenai persepsi pengguna terhadap wisata Air Terjun Lau Berte.
 
-Media sosial menghasilkan data opini publik dalam jumlah besar yang dapat dimanfaatkan untuk mengetahui persepsi masyarakat terhadap suatu destinasi wisata. TikTok banyak dipakai untuk berbagi pengalaman wisata, dan banyaknya komentar membuat identifikasi sentimen secara manual kurang efektif, sehingga diperlukan klasifikasi otomatis.
+**Tujuan penelitian:**
+- Menerapkan algoritma Multinomial Naive Bayes untuk mengklasifikasikan sentimen komentar TikTok.
+- Mengolah teks melalui tahapan preprocessing dan pembobotan fitur TF-IDF.
+- Mengevaluasi kinerja model menggunakan accuracy, precision, recall, dan F1-score.
+- Menampilkan hasil analisis melalui visualisasi yang mudah dipahami.
 
-**Tujuan:** menerapkan algoritma Naïve Bayes untuk menganalisis sentimen komentar pengguna TikTok dan mengevaluasi kinerjanya dengan akurasi, presisi, recall, dan F1-score.
+**Metodologi:** CRISP-DM (*Cross-Industry Standard Process for Data Mining*).
 
-**Metode:** [CRISP-DM](https://en.wikipedia.org/wiki/Cross-industry_standard_process_for_data_mining) (Cross-Industry Standard Process for Data Mining).
+**Dataset:** Sebanyak 634 komentar, terdiri dari 507 data latih dan 127 data uji.
 
-**Data:** 634 komentar, dibagi menjadi 507 data latih dan 127 data uji.
+### Hasil Evaluasi
 
-**Tahapan:** text preprocessing (case folding, cleaning, normalisasi, tokenisasi, stopword removal, stemming), pelabelan sentimen berbasis leksikon, pembobotan fitur TF-IDF, lalu klasifikasi Naïve Bayes.
+| Metrik | Hasil |
+|---|---:|
+| Accuracy | 80% |
+| Precision | 80% |
+| Recall | 82% |
+| F1-Score | 79% |
 
-### Hasil
+Hasil evaluasi menunjukkan tingkat kesesuaian prediksi model terhadap label sentimen berbasis leksikon pada dataset yang digunakan.
 
-| Accuracy | Precision | Recall | F1-Score |
-|:---:|:---:|:---:|:---:|
-| 80% | 80% | 82% | 79% |
+## Fitur Utama
 
-Naïve Bayes dinilai mampu mengklasifikasikan sentimen komentar pengguna TikTok dengan baik sekaligus memberi gambaran persepsi masyarakat terhadap Wisata Air Terjun Lau Berte.
-
----
-
-## ✨ Fitur
-
-| Fitur | Keterangan |
+| Fitur | Deskripsi |
 |---|---|
-| **Scraping TikTok** | Mengambil komentar dari URL video TikTok lewat [Apify](https://apify.com) (butuh API Token), hasilnya bisa diunduh sebagai CSV. |
-| **Upload Dataset CSV** | Menganalisis ribuan komentar sekaligus dari file CSV sendiri. |
-| **Analisis 1 Komentar** | Mengetik satu komentar dan melihat setiap tahap preprocessing, label, serta nilai log posterior. |
-| **Visualisasi** | Pie chart distribusi sentimen, word cloud per kelas, dan confusion matrix. |
-| **Evaluasi** | Accuracy, Precision, Recall, dan F1-Score (weighted). |
-| **Ekspor hasil** | Unduh hasil scraping, hasil preprocessing, dan hasil prediksi dalam format CSV. |
+| **Scraping Komentar TikTok** | Mengambil komentar dari video TikTok menggunakan Apify API dan menyediakan hasilnya dalam format CSV. |
+| **Unggah Dataset CSV** | Memproses dan menganalisis kumpulan komentar dari file CSV yang disediakan pengguna. |
+| **Analisis Satu Komentar** | Menganalisis komentar secara individual, mulai dari preprocessing hingga prediksi sentimen dan nilai log posterior. |
+| **Visualisasi Sentimen** | Menampilkan distribusi sentimen melalui pie chart, word cloud untuk setiap kelas, dan confusion matrix. |
+| **Evaluasi Model** | Menghitung accuracy, precision, recall, dan F1-score berbobot (*weighted*). |
+| **Ekspor Hasil Analisis** | Mengunduh hasil scraping, preprocessing, dan prediksi dalam format CSV. |
 
----
+## Alur Kerja Sistem
 
-## 🧠 Cara Kerja Sistem
+Proses analisis sentimen dilakukan melalui beberapa tahapan berikut:
 
-```
-Komentar mentah
-      │
-      ▼
-┌───────────────────────────── Preprocessing ─────────────────────────────┐
-│ 1. Case folding        → huruf kecil                                    │
-│ 2. Cleaning            → hapus URL, @mention, #hashtag, angka & simbol  │
-│ 3. Normalisasi         → hapus huruf berulang, ganti frasa & kata tidak │
-│                          baku (kamus normalisasi)                       │
-│ 4. Tokenisasi          → pisah per kata                                 │
-│ 5. Stopword removal    → buang kata umum (stopword.txt)                 │
-│ 6. Stemming            → Sastrawi (kecuali kata di exception_stemming)  │
-└─────────────────────────────────────────────────────────────────────────┘
-      │  final_text
-      ├───────────────────────────────┬─────────────────────────────────┐
-      ▼                               ▼                                 │
- Pelabelan Lexicon              TF-IDF Vectorizer                       │
- (sentiwords_id.txt)                  │                                 │
-      │                               ▼                                 │
- label_aktual                  Multinomial Naive Bayes                  │
-      │                               │                                 │
-      │                        prediksi_sentimen + log posterior        │
-      └──────────────► Evaluasi (accuracy, precision, recall, F1) ◄─────┘
-```
+1. **Pengumpulan data:** komentar diperoleh melalui scraping TikTok atau unggahan dataset CSV.
+2. **Text preprocessing:** membersihkan dan menyiapkan teks sebelum dianalisis.
+3. **Pelabelan sentimen:** menentukan label positif, negatif, atau netral menggunakan kamus sentimen berbasis leksikon.
+4. **Ekstraksi fitur:** mengubah teks menjadi representasi numerik menggunakan TF-IDF.
+5. **Klasifikasi:** memprediksi kategori sentimen menggunakan Multinomial Naive Bayes.
+6. **Evaluasi dan visualisasi:** menyajikan metrik evaluasi serta visualisasi hasil analisis.
 
-### 1. Preprocessing
-Semua fungsi ada di `streamlit/pages/1_Analisis_Sentimen.py` (`preprocessing_pipeline`).
+### 1. Text Preprocessing
 
-- **Cleaning** – menghapus `http...`, `@user`, `#tag`, dan semua karakter selain huruf (angka, emoji, tanda baca ikut hilang).
-- **Normalisasi** – (a) huruf yang berulang ≥3 kali dipadatkan (`cantikkk` → `cantik`), (b) frasa diganti memakai `phrase_normalisasi.csv` (mis. `masya allah` → `masyaallah`), (c) kata tidak baku diganti memakai `kamus_normalisasi.csv` (mis. `udh` → `sudah`, `gk` → `ga`).
-- **Stopword** – daftar 80 kata di `stopword.txt`. Kata negasi (`tidak`, `ga`, `gak`, `nggak`, `tak`) sengaja *tidak* dibuang agar bisa dipakai pada pelabelan.
-- **Stemming** – stemmer **Sastrawi**; kata yang ada di `exception_stemming.txt` (mis. `pemandangan`, `pengen`) dilewati supaya tidak rusak.
+Tahap preprocessing bertujuan mengurangi variasi penulisan dan mempersiapkan teks agar dapat diproses oleh model. Tahapan yang diterapkan meliputi:
 
-### 2. Pelabelan dengan Lexicon (`label_aktual`)
-Setiap kata hasil stemming dicocokkan dengan kamus `sentiwords_id.txt` (format `kata:skor`, skor −5 s.d. +5, 1.738 kata). Skor seluruh kata dijumlahkan; jika kata sebelumnya adalah **negasi**, skor kata tersebut dibalik (× −1).
+- **Case folding:** mengubah seluruh huruf menjadi huruf kecil.
+- **Cleaning:** menghapus URL, mention, hashtag, angka, emoji, tanda baca, dan karakter selain huruf.
+- **Normalisasi:** memperbaiki kata tidak baku, mengganti frasa tertentu, serta menyederhanakan huruf yang berulang.
+- **Tokenisasi:** memisahkan teks menjadi token atau kata.
+- **Stopword removal:** menghapus kata umum yang terdapat dalam daftar stopword, dengan tetap mempertahankan kata negasi.
+- **Stemming:** mengubah kata menjadi bentuk dasarnya menggunakan Sastrawi, dengan pengecualian untuk kata tertentu agar bentuk katanya tidak berubah secara keliru.
 
-| Total skor | Label |
+Proses ini menggunakan kamus normalisasi kata dan frasa, daftar stopword, serta daftar pengecualian stemming yang disimpan dalam folder dataset.
+
+### 2. Pelabelan Sentimen Berbasis Leksikon
+
+Pelabelan dilakukan dengan mencocokkan kata-kata hasil preprocessing terhadap kamus sentimen berbahasa Indonesia yang berisi 1.738 kata dengan rentang skor -5 hingga +5.
+
+Skor setiap kata dijumlahkan untuk memperoleh skor sentimen keseluruhan. Sistem juga mempertimbangkan kata negasi yang muncul tepat sebelum kata bersentimen dengan membalik skor kata tersebut.
+
+Penentuan label dilakukan berdasarkan aturan berikut:
+
+| Total Skor | Label |
 |---|---|
-| > 0 | `positif` |
-| < 0 | `negatif` |
-| = 0 | `netral` |
+| Lebih dari 0 | Positif |
+| Kurang dari 0 | Negatif |
+| Sama dengan 0 | Netral |
 
-### 3. Klasifikasi Naive Bayes (`prediksi_sentimen`)
-Teks akhir diubah menjadi vektor oleh `TfidfVectorizer` (739 fitur kosakata, unigram, normalisasi L2), lalu diprediksi oleh `MultinomialNB` (`alpha=1.0`). Model juga mengeluarkan **log posterior** untuk tiap kelas (`negatif`, `netral`, `positif`) yang ditampilkan pada hasil.
+Label yang dihasilkan digunakan sebagai label acuan dalam proses evaluasi model.
 
-### 4. Evaluasi
-Metrik dihitung dengan membandingkan **prediksi Naive Bayes** terhadap **label dari lexicon** (`label_aktual`), bukan terhadap label manual dari anotator.
+### 3. Ekstraksi Fitur dan Klasifikasi
 
-> ⚠️ **Catatan:** karena `label_aktual` berasal dari lexicon, angka evaluasi di aplikasi menunjukkan seberapa jauh model Naive Bayes *menyerupai* pelabelan lexicon pada data yang diunggah, bukan akurasi terhadap penilaian manusia.
+Teks hasil preprocessing diubah menjadi vektor numerik menggunakan `TfidfVectorizer` dari scikit-learn. Konfigurasi yang digunakan mencakup 739 fitur kosakata, pendekatan unigram, dan normalisasi L2.
 
----
+Selanjutnya, algoritma **Multinomial Naive Bayes** digunakan untuk memprediksi kelas sentimen berdasarkan fitur tersebut. Model juga menghasilkan nilai log posterior untuk kelas negatif, netral, dan positif yang ditampilkan pada hasil analisis komentar.
 
-## 📁 Struktur Proyek
+### 4. Evaluasi Model
 
-```
+Evaluasi dilakukan dengan membandingkan hasil prediksi Multinomial Naive Bayes terhadap label acuan yang dihasilkan melalui pelabelan berbasis leksikon.
+
+Metrik evaluasi yang digunakan meliputi:
+
+- Accuracy
+- Precision
+- Recall
+- F1-score
+
+**Catatan:** karena label acuan berasal dari leksikon, hasil evaluasi menggambarkan kesesuaian prediksi model terhadap pelabelan tersebut. Hasil ini tidak secara langsung menunjukkan tingkat kesesuaian model terhadap penilaian manusia.
+
+## Struktur Proyek
+
+```text
 SENTIMEN LAU BERTE/
 ├── dataset/
-│   ├── dataset.csv               # komentar mentah hasil scraping (kolom: text)
-│   ├── data_train.csv            # 507 data latih (final_text, label)
-│   ├── data_test.csv             # 127 data uji (kolom: text)
-│   ├── sentiwords_id.txt         # lexicon sentimen (kata:skor)
-│   ├── kamus_normalisasi.csv     # kata tidak baku → baku
-│   ├── phrase_normalisasi.csv    # frasa tidak baku → baku
-│   ├── stopword.txt              # daftar stopword
-│   └── exception_stemming.txt    # kata yang tidak di-stem
+│   ├── dataset.csv
+│   ├── data_train.csv
+│   ├── data_test.csv
+│   ├── sentiwords_id.txt
+│   ├── kamus_normalisasi.csv
+│   ├── phrase_normalisasi.csv
+│   ├── stopword.txt
+│   └── exception_stemming.txt
 ├── model/
-│   ├── naive_bayes_model.pkl     # MultinomialNB terlatih
-│   └── tfidf_vectorizer.pkl      # TfidfVectorizer terlatih
+│   ├── naive_bayes_model.pkl
+│   └── tfidf_vectorizer.pkl
 └── streamlit/
-    ├── Beranda.py                # halaman utama (entry point)
+    ├── Beranda.py
     ├── pages/
-    │   └── 1_Analisis_Sentimen.py  # halaman analisis
-    └── assets/                   # gambar latar & foto air terjun
+    │   └── 1_Analisis_Sentimen.py
+    └── assets/
 ```
 
-**Pembagian data:** 634 komentar → 507 data latih + 127 data uji.
+**Keterangan direktori:**
 
-**Data latih:** 507 komentar (238 positif, 142 negatif, 127 netral). Model yang tersimpan memiliki 238 sampel per kelas, sehingga kemungkinan data latih diseimbangkan (oversampling) sebelum pelatihan.
+- `dataset/`: menyimpan data komentar, dataset latih dan uji, kamus sentimen, serta konfigurasi preprocessing.
+- `model/`: menyimpan model Naive Bayes dan TF-IDF Vectorizer yang telah dilatih.
+- `streamlit/`: berisi aplikasi web, halaman analisis sentimen, dan aset visual.
 
----
+Dataset penelitian terdiri dari 634 komentar, dengan pembagian 507 data latih dan 127 data uji. Distribusi awal data latih mencakup 238 komentar positif, 142 komentar negatif, dan 127 komentar netral.
 
-## 🚀 Instalasi & Menjalankan
+## Instalasi dan Menjalankan Aplikasi
 
-**Prasyarat:** Python 3.9+
+### Prasyarat
+
+- Python 3.9 atau versi yang lebih baru.
+- Git.
+- API Token Apify jika ingin menggunakan fitur scraping TikTok.
+
+### 1. Clone Repositori
 
 ```bash
-# 1. Clone repositori
 git clone https://github.com/<username>/<nama-repo>.git
 cd <nama-repo>
+```
 
-# 2. (Opsional) buat virtual environment
+Ganti `<username>` dan `<nama-repo>` dengan informasi repositori GitHub yang sebenarnya.
+
+### 2. Membuat Virtual Environment
+
+Langkah ini bersifat opsional, tetapi disarankan untuk memisahkan dependensi proyek dari lingkungan Python lainnya.
+
+```bash
 python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+```
 
-# 3. Install dependensi
+Aktifkan virtual environment sesuai sistem operasi.
+
+**Windows:**
+
+```bash
+venv\Scripts\activate
+```
+
+**Linux/macOS:**
+
+```bash
+source venv/bin/activate
+```
+
+### 3. Menginstal Dependensi
+
+```bash
 pip install streamlit pandas matplotlib wordcloud Sastrawi apify-client scikit-learn==1.6.1
+```
 
-# 4. Jalankan dari dalam folder streamlit
+### 4. Menjalankan Aplikasi
+
+Masuk ke direktori `streamlit` terlebih dahulu, kemudian jalankan aplikasi:
+
+```bash
 cd streamlit
 streamlit run Beranda.py
 ```
 
-Aplikasi akan terbuka di `http://localhost:8501`.
+Aplikasi dapat diakses melalui browser pada alamat `http://localhost:8501`.
 
-> **Penting:**
-> - Jalankan perintah dari folder `streamlit/`, karena gambar dibaca lewat path relatif `assets/...`.
-> - Gunakan `scikit-learn==1.6.1`. File `.pkl` dilatih dengan versi tersebut; versi lain memunculkan `InconsistentVersionWarning` dan berisiko menghasilkan prediksi yang berbeda.
+**Hal yang perlu diperhatikan:**
 
----
+- Jalankan aplikasi dari direktori `streamlit` agar pemanggilan aset gambar melalui path relatif dapat berjalan sesuai konfigurasi.
+- Gunakan `scikit-learn==1.6.1` untuk menyesuaikan versi yang digunakan ketika model disimpan. Versi berbeda dapat memunculkan peringatan kompatibilitas dan berpotensi memengaruhi hasil prediksi.
 
-## 📖 Panduan Penggunaan
+## Panduan Penggunaan
 
-### A. Analisis 1 Komentar
-1. Buka halaman **Analisis Sentimen**, pilih **Analisis 1 Komentar**.
-2. Ketik komentar, contoh: `Tempatnya bagus banget, adem dan bersih.`
-3. Klik **Analisis Komentar** untuk melihat tiap tahap preprocessing, label lexicon, prediksi Naive Bayes, dan log posterior.
+### A. Analisis Satu Komentar
 
-### B. Upload Dataset CSV
-1. Pilih **Upload Dataset CSV**.
-2. Unggah file CSV dengan **kolom bernama `text`** dan pemisah **titik koma (`;`)**. File satu kolom seperti `dataset/dataset.csv` dapat langsung dipakai.
-3. Aplikasi menampilkan hasil preprocessing, prediksi, pie chart, word cloud, metrik evaluasi, dan confusion matrix.
+1. Buka halaman **Analisis Sentimen**.
+2. Pilih mode **Analisis 1 Komentar**.
+3. Masukkan komentar yang ingin dianalisis, misalnya `Tempatnya bagus banget, adem dan bersih.`
+4. Klik tombol **Analisis Komentar**.
+5. Lihat hasil preprocessing, label leksikon, prediksi Naive Bayes, dan nilai log posterior yang ditampilkan.
 
-### C. Scraping TikTok
-1. Daftar akun gratis di [console.apify.com](https://console.apify.com).
-2. Salin API Token dari **Settings → API & Integrations**.
-3. Tempel token dan URL video TikTok (satu URL per baris), lalu klik **Mulai Scraping**.
-4. Komentar yang berhasil diambil (maks. 1000 per video) langsung dianalisis dan bisa diunduh sebagai CSV.
+### B. Analisis Dataset CSV
 
-> API Token hanya dipakai saat sesi berjalan dan tidak disimpan. Jangan pernah meng-commit token ke repositori.
+1. Pilih mode **Upload Dataset CSV**.
+2. Unggah file CSV yang memiliki kolom bernama `text`.
+3. Pastikan file menggunakan pemisah titik koma (`;`).
+4. Tunggu hingga proses analisis selesai.
+5. Lihat hasil preprocessing, prediksi sentimen, visualisasi, metrik evaluasi, dan confusion matrix yang tersedia.
+6. Unduh hasil analisis jika diperlukan.
 
----
+### C. Scraping Komentar TikTok
 
-## 🛠️ Teknologi
+1. Buat akun melalui [Apify Console](https://console.apify.com).
+2. Salin API Token melalui menu **Settings → API & Integrations**.
+3. Masukkan token dan URL video TikTok, dengan satu URL pada setiap baris.
+4. Klik **Mulai Scraping** untuk mengambil komentar.
+5. Hasil scraping akan diproses dan dapat diunduh dalam format CSV.
 
-- [Streamlit](https://streamlit.io) – antarmuka web
-- [scikit-learn](https://scikit-learn.org) – TF-IDF, Multinomial Naive Bayes, metrik evaluasi
-- [Sastrawi](https://github.com/har07/PySastrawi) – stemmer Bahasa Indonesia
-- [pandas](https://pandas.pydata.org) – pengolahan data
-- [Matplotlib](https://matplotlib.org) & [WordCloud](https://github.com/amueller/word_cloud) – visualisasi
-- [Apify Client](https://docs.apify.com/api/client/python/) – scraping komentar TikTok
+Jumlah komentar yang diambil dibatasi hingga maksimal 1.000 komentar per video sesuai konfigurasi aplikasi.
 
----
+**Keamanan API Token:** token digunakan selama sesi aplikasi berjalan dan tidak disimpan secara permanen. Hindari memasukkan token ke dalam kode atau mengunggahnya ke repositori publik.
 
-## ⚠️ Keterbatasan
+## Teknologi yang Digunakan
 
-- Negasi hanya dideteksi pada **satu kata sebelum** kata sentimen.
-- Emoji, angka, dan tanda baca dibuang saat cleaning sehingga informasi sentimen dari emoji hilang.
-- Kualitas hasil bergantung pada kelengkapan lexicon dan kamus normalisasi, terutama untuk bahasa gaul dan campuran bahasa daerah.
-- Dataset relatif kecil (±500 data latih), sehingga performa pada komentar di luar domain wisata ini bisa menurun.
+| Teknologi | Kegunaan |
+|---|---|
+| [Python](https://www.python.org/) | Bahasa pemrograman utama. |
+| [Streamlit](https://streamlit.io/) | Membangun antarmuka aplikasi web interaktif. |
+| [scikit-learn](https://scikit-learn.org/) | Implementasi TF-IDF, Multinomial Naive Bayes, dan metrik evaluasi. |
+| [Sastrawi](https://github.com/har07/PySastrawi) | Melakukan stemming untuk teks berbahasa Indonesia. |
+| [pandas](https://pandas.pydata.org/) | Membaca, mengolah, dan mengelola dataset. |
+| [Matplotlib](https://matplotlib.org/) | Membuat visualisasi hasil analisis. |
+| [WordCloud](https://github.com/amueller/word_cloud) | Menampilkan kata-kata yang sering muncul dalam setiap kelas sentimen. |
+| [Apify Client](https://docs.apify.com/api/client/python/) | Mengintegrasikan proses pengambilan komentar TikTok. |
 
----
+## Keterbatasan Sistem
 
-## 📄 Lisensi
+Beberapa keterbatasan yang perlu diperhatikan dalam penggunaan aplikasi ini:
 
-Proyek ini dibuat untuk keperluan akademik/penelitian. Tambahkan lisensi sesuai kebutuhan (mis. MIT) sebelum dipublikasikan.
+- Pendeteksian negasi hanya mempertimbangkan satu kata sebelum kata yang memiliki skor sentimen.
+- Emoji, angka, dan tanda baca dihapus saat cleaning sehingga informasi sentimen yang terkandung di dalamnya tidak digunakan.
+- Hasil klasifikasi bergantung pada kelengkapan kamus sentimen dan kamus normalisasi, terutama untuk bahasa gaul dan campuran bahasa daerah.
+- Ukuran dataset latih relatif terbatas, sehingga performa pada komentar di luar konteks wisata Air Terjun Lau Berte belum tentu sama.
+- Evaluasi model menggunakan label berbasis leksikon sebagai acuan, sehingga hasilnya belum menggambarkan kesesuaian dengan anotasi manual manusia.
